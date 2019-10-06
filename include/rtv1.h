@@ -10,15 +10,17 @@
 struct  Material
 {
 public:
-    Material(Vec3f const & v) : color(v) { }
-    Vec3f   color;
+    Material(Vec3d const & v) : color(v) { }
+    Material() : color() { }
+    Vec3d   color;
 };
 
 struct  Shape
 {
     Shape(Material const & m) : material(m) { }
     virtual ~Shape() {}
-    virtual bool    if_intersect(Vec3f const & v, Vec3f const & point, float & dist) const noexcept = 0;
+    virtual bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const noexcept = 0;
+    virtual Vec3d & get_normal(Vec3d const & point) = 0;
     Material    material;
 };
 
@@ -26,11 +28,13 @@ struct  Shape
 struct  Sphere : Shape
 {
 public:
-    Sphere(Vec3f const & c, float r, Material const & m) noexcept : Shape(m), center(c), radius(r) { }
-    bool   if_intersect(Vec3f const & v, Vec3f const & point, float & dist) const noexcept;
+
+    Sphere(Vec3d const & c, double r, Material const & m) noexcept : Shape(m), center(c), radius(r) { }
+    bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const noexcept;
+    Vec3d & get_normal(Vec3d const & point);
 private:
-    Vec3f       center;
-    float       radius;
+    Vec3d       center;
+    double      radius;
 };
 
 #endif

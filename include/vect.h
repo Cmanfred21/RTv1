@@ -20,6 +20,7 @@ typedef vec<2, float>	Vec2f;
 typedef vec<2, int>		Vec2i;
 typedef vec<3, float>	Vec3f;
 typedef vec<3, int>		Vec3i;
+typedef vec<3, double>	Vec3d;
 
 template <typename T>
 struct vec<2, T> {
@@ -37,6 +38,8 @@ struct vec<3, T>
 	vec(T X, T Y, T Z) : x(X), y(Y), z(Z) { }
     T &			operator[](const size_t i) noexcept { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
     T const &	operator[](const size_t i) const noexcept { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
+    double      norm() { return std::sqrt(x * x + y * y + z * z); }
+    vec<3, T> & normalize(T l = 1) { *this = (*this) * (l / norm()); return *this; }
 	T x, y, z;
 };
 

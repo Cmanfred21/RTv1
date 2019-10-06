@@ -1,6 +1,6 @@
 NAME = RTv1
 
-FILES = main.cpp
+FILES = main.cpp rtv1.cpp
 
 OBJ = $(addprefix objectives/, $(FILES:.cpp=.o))
 HEADERS = -I include
