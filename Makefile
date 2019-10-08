@@ -19,7 +19,7 @@ $(NAME): $(OBJ)
 
 objectives/%.o: src/%.cpp | objectives
 	#-fsanitize=address -g
-	g++  $(INCL) $(HEADERS)  -o $@ -c $< -std=c++11
+	g++  $(INCL) $(HEADERS)  -o $@ -c $< -std=c++14
 
 
 clean:

@@ -37,4 +37,12 @@ private:
     double      radius;
 };
 
+struct  Light
+{
+    Light(const Vec3d & p, const double i) : position(p), intensity (i) { }
+
+    Vec3d   position;
+    double  intensity;
+};
+
 #endif

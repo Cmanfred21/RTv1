@@ -75,9 +75,18 @@ vec<DIM, T>     operator*(vec<DIM, T> const & lhs, U const & rhs) noexcept
 {
     vec<DIM, T> ret;
     for (size_t i = 0; i < DIM; i++)
-        ret[i] += lhs[i] * rhs;
+        ret[i] = lhs[i] * rhs;
     return (ret);
 }
+
+//template<size_t DIM, typename T, typename U>
+//vec<DIM, T>     operator*(U const & lhs, vec<DIM, T> const & rhs) noexcept
+//{
+//    vec<DIM, T> ret;
+//    for (size_t i = 0; i < DIM; i++)
+//        ret[i] += rhs[i] * lhs;
+//    return (ret);
+//}
 
 template<size_t DIM, typename T>
 vec<DIM, T>     operator-(vec<DIM, T> const & rhs) noexcept
