@@ -2,21 +2,18 @@
 
 bool   Sphere::if_intersect(const Vec3d &point, const Vec3d &v, double & t0) const noexcept
 {
-//    std::cout << point << "           " << v << std::endl;
     Vec3d   dist = center - point;
-    double  a = v * v;
-    double  b = v * dist * 2;
+    double  b = v * dist;
     double  c = dist * dist - radius * radius;
-    double  discr = b * b - 4 * a * c;
-//    std::cout << a << " " << b << " " << c << std::endl;
+    double  discr = b * b - c;
     if (discr < 0)
         return (false);
-    t0 = (-b + sqrt(discr)) / (2 * a);
-    double t1 = (-b - sqrt(discr)) / (2 * a);
-//    std::cout << t0 << "        " << t1 << "  " <<  a <<  std::endl;
+    t0 = b + sqrt(discr);
+    double t1 = b - sqrt(discr);
     if (t0 < 0 &&  t1 < 0)
         return (false);
-    t0 = t0 > t1 ? t0 : t1;
+    if (t1 < t0 && t1 > 0)
+        t0 = t1;
     return (true);
 }
 

@@ -39,7 +39,7 @@ private:
 
 struct  Light
 {
-    Light(const Vec3d & p, const double i) : position(p), intensity (i) { }
+    Light(Vec3d const & p, const double i) : position(p), intensity (i) { }
 
     Vec3d   position;
     double  intensity;

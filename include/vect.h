@@ -38,7 +38,7 @@ struct vec<3, T>
 	vec(T X, T Y, T Z) : x(X), y(Y), z(Z) { }
     T &			operator[](const size_t i) noexcept { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
     T const &	operator[](const size_t i) const noexcept { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
-    double      norm() { return std::sqrt(x * x + y * y + z * z); }
+    double      norm() const noexcept { return std::sqrt(x * x + y * y + z * z); }
     vec<3, T> & normalize(T l = 1) { *this = (*this) * (l / norm()); return *this; }
 	T x, y, z;
 };
@@ -78,15 +78,6 @@ vec<DIM, T>     operator*(vec<DIM, T> const & lhs, U const & rhs) noexcept
         ret[i] = lhs[i] * rhs;
     return (ret);
 }
-
-//template<size_t DIM, typename T, typename U>
-//vec<DIM, T>     operator*(U const & lhs, vec<DIM, T> const & rhs) noexcept
-//{
-//    vec<DIM, T> ret;
-//    for (size_t i = 0; i < DIM; i++)
-//        ret[i] += rhs[i] * lhs;
-//    return (ret);
-//}
 
 template<size_t DIM, typename T>
 vec<DIM, T>     operator-(vec<DIM, T> const & rhs) noexcept

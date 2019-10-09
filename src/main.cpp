@@ -42,9 +42,9 @@ Vec3d   cast_ray(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> con
     double  light_intensity = 0;
     for (auto it : lights) {
         Vec3d   light_dir = (it.position - hit).normalize();
+            std::cout << light_dir * N << std::endl;
         light_intensity += it.intensity * std::max(0., light_dir * N);
     }
-//    std::cout << light_intensity << std::endl;
     return material.color * light_intensity;
 }
 
@@ -71,14 +71,14 @@ int		main()
 
     std::vector<Shape *> figures;
 
-    figures.push_back(new Sphere(Vec3d(3, 0, 16), 2, ivory));
-    figures.push_back(new Sphere(Vec3d(1.0, 1.5, 12), 2,      glass));
-    figures.push_back(new Sphere(Vec3d(-1.5, 0.5, 18), 3, red_rubber));
-    figures.push_back(new Sphere(Vec3d( -7,    -5,   18), 4,     mirror));
+    figures.push_back(new Sphere(Vec3d(-3, 0, -16), 2, ivory));
+    figures.push_back(new Sphere(Vec3d(-1.0, -1.5, -12), 2,      glass));
+    figures.push_back(new Sphere(Vec3d(1.5, -0.5, -18), 3, red_rubber));
+    figures.push_back(new Sphere(Vec3d( 7,    5,   -18), 4,     mirror));
 
     std::vector<Light>  lights;
 
-    lights.push_back(Light(Vec3d(20, -20,  -20), 1.5));
+    lights.push_back(Light(Vec3d(-20, 20, 20), 1.5));
 
     render(figures, lights);
     system("open ~/RTv1/out.ppm");
