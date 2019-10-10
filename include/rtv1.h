@@ -10,9 +10,11 @@
 struct  Material
 {
 public:
-    Material(Vec3d const & v) : color(v) { }
-    Material() : color() { }
+    Material(Vec3d const & v, Vec3d const & a, double e) : color(v), albedo(a), spec_exp(e) { }
+    Material() : color(), albedo(1, 0, 0), spec_exp() { }
     Vec3d   color;
+    Vec3d   albedo;
+    double  spec_exp;
 };
 
 struct  Shape
@@ -28,7 +30,6 @@ struct  Shape
 struct  Sphere : Shape
 {
 public:
-
     Sphere(Vec3d const & c, double r, Material const & m) noexcept : Shape(m), center(c), radius(r) { }
     bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const noexcept;
     Vec3d & get_normal(Vec3d const & point);

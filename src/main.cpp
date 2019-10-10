@@ -13,39 +13,52 @@ void    write_to_ppm(std::vector<Vec3d> framebuffer) {
             ofs << static_cast<char>(255 * std::max(0., std::min(1., framebuffer[i][j])));
 }
 
+Vec3d   reflect(Vec3d const & I, Vec3d const & N) {
+    return I - N * 2. * (I * N);
+}
+
 bool    scene_intersect(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> const & figures, Vec3d & hit, Vec3d & N, Material & material)
 {
     double  dist = std::numeric_limits<double>::max();
     double  dist_i;
     for (auto i : figures)
     {
-//        std::cout << "lol" <<  std::endl;
         if (i->if_intersect(orig, dir, dist_i) && dist_i < dist) {
-//            std::cout << "kek" <<  std::endl;
             dist = dist_i;
             hit = orig + dir * dist_i;
             N = i->get_normal(hit);
             material = i->material;
-//            std::cout << material.color << std::endl;
         }
     }
     return dist < 1000;
 }
 
-Vec3d   cast_ray(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> const & figures, std::vector<Light> const & lights)
+Vec3d   cast_ray(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> const & figures, std::vector<Light> const & lights, size_t depth = 0)
 {
     Vec3d       hit, N;
     Material    material;
 
-    if (!scene_intersect(orig, dir, figures, hit, N, material))
+    if (depth > 4 || !scene_intersect(orig, dir, figures, hit, N, material))
         return (Vec3d(0.2, 0.7, 0.8));
+
+    Vec3d   reflect_dir = reflect(dir, N).normalize();
+    Vec3d   reflect_orig = reflect_dir * N < 0 ?  hit - N * 1e-3 : hit + N * 1e-3;
+    Vec3d   reflect_color = cast_ray(reflect_orig, reflect_dir, figures, lights, depth + 1);
+
     double  light_intensity = 0;
+    double  spec_light_intensity = 0;
     for (auto it : lights) {
         Vec3d   light_dir = (it.position - hit).normalize();
-            std::cout << light_dir * N << std::endl;
+        double  light_dist = (it.position - hit).norm();
+        Vec3d   shadow_orig = light_dir * N < 0 ? hit - N * 1e-3 : hit + N * 1e-3;
+        Vec3d   shadow_hit, shadow_N;
+        Material    tmp_mat;
+        if (scene_intersect(shadow_orig, light_dir, figures, shadow_hit, shadow_N, tmp_mat) && (shadow_hit - shadow_orig).norm() < light_dist)
+            continue ;
         light_intensity += it.intensity * std::max(0., light_dir * N);
+        spec_light_intensity += pow(std::max(0., -reflect(-light_dir, N) * dir), material.spec_exp) * it.intensity;
     }
-    return material.color * light_intensity;
+    return material.color * light_intensity * material.albedo[0] + Vec3d(1., 1., 1.) * spec_light_intensity * material.albedo[1] + reflect_color * material.albedo[2];
 }
 
 void    render(std::vector<Shape *> const & figures, std::vector<Light> const & lights)
@@ -64,10 +77,10 @@ void    render(std::vector<Shape *> const & figures, std::vector<Light> const & 
 
 int		main()
 {
-    Material      ivory(Vec3d(0.4, 0.4, 0.3));
-    Material      glass(Vec3d(0.6, 0.7, 0.8));
-    Material red_rubber(Vec3d(0.3, 0.1, 0.1));
-    Material     mirror(Vec3d(1., 1., 1.));
+    Material      ivory(Vec3d(0.4, 0.4, 0.3), Vec3d(0.6, 0.3, 0.1), 50.);
+    Material      glass(Vec3d(0.6, 0.7, 0.8), Vec3d(0.5, 0.5, 0.5), 125.);
+    Material red_rubber(Vec3d(0.3, 0.1, 0.1), Vec3d(0.9, 0.1, 0.0), 10.);
+    Material     mirror(Vec3d(1., 1., 1.), Vec3d(0.0, 10.0, 0.8), 1425.);
 
     std::vector<Shape *> figures;
 
