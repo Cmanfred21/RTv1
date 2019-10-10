@@ -92,6 +92,8 @@ int		main()
     std::vector<Light>  lights;
 
     lights.push_back(Light(Vec3d(-20, 20, 20), 1.5));
+    lights.push_back(Light(Vec3d( 30, 50, -25), 1.8));
+    lights.push_back(Light(Vec3d( 30, 20,  30), 1.7));
 
     render(figures, lights);
     system("open ~/RTv1/out.ppm");
