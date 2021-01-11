@@ -4,13 +4,30 @@
 # include <cmath>
 # include <cassert>
 #include <iostream>
+#include <vector>
 
 template <size_t DIM, typename T>
 struct vec
 {
+    vec(std::vector<T>& values) 
+    {
+        assert(values.size() == DIM);
+        for (size_t i = 0; i < DIM; i++)
+        {
+            data_[i] = values[i];
+        }
+    }
 	vec()  { for (size_t i =  0; i < DIM; i++) data_[i] = T(); }
-    T &			operator[](const size_t i) noexcept { assert(i < DIM); return (data_[i]); }
-    T const &	operator[](const size_t i) const noexcept { assert(i < DIM); return (data_[i]); }
+    T &			operator[](const size_t i)  { assert(i < DIM); return (data_[i]); }
+    T const &	operator[](const size_t i) const  { assert(i < DIM); return (data_[i]); }
+
+    double Length()
+    {
+        double res = 0;
+        for (size_t i = 0; i < DIM; i++)
+            res += data_[i] * data_[i];
+        return (sqrt(res));
+    }
 
 private:
 	T	data_[DIM];
@@ -27,9 +44,14 @@ template <typename T>
 struct vec<2, T> {
 	vec() : x(T()), y(T()) { }
 	vec(T X, T Y) : x(X), y(Y) { }
-    T &			operator[](const size_t i) noexcept { assert(i < 2 && i >= 0); return (i == 0 ? x : y); }
-    T const &	operator[](const size_t i) const noexcept { assert(i < 2 && i >= 0); return (i == 0 ? x : y); }
+    T &			operator[](const size_t i) { assert(i < 2 && i >= 0); return (i == 0 ? x : y); }
+    T const &	operator[](const size_t i) const { assert(i < 2 && i >= 0); return (i == 0 ? x : y); }
 	T x, y;
+    double Length()
+    {
+        double res = x * x + y * y;
+        return (sqrt(res));
+    }
 };
 
 template <typename T>
@@ -37,15 +59,21 @@ struct vec<3, T>
 {
 	vec() : x(T()), y(T()), z(T()) { }
 	vec(T X, T Y, T Z) : x(X), y(Y), z(Z) { }
-    T &			operator[](const size_t i) noexcept { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
-    T const &	operator[](const size_t i) const noexcept { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
-    double      norm() const noexcept { return std::sqrt(x * x + y * y + z * z); }
+    T &			operator[](const size_t i) { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
+    T const &	operator[](const size_t i) const { assert(i < 3 && i >= 0); return (i == 0 ? x : (i == 1 ? y : z)); }
+    double      norm() const  { return std::sqrt(x * x + y * y + z * z); }
     vec<3, T> & normalize(T l = 1) { *this = (*this) * (l / norm()); return *this; }
 	T x, y, z;
+
+    double Length()
+    {
+        double res = x * x + y * y + z* z;
+        return (sqrt(res));
+    }
 };
 
 template <size_t DIM, typename T>
-vec<DIM, T>     operator+(vec<DIM, T> const & lhs, vec<DIM, T> const & rhs) noexcept
+vec<DIM, T>     operator+(vec<DIM, T> const & lhs, vec<DIM, T> const & rhs)
 {
     vec<DIM, T> ret;
     for (size_t i = 0; i < DIM; i++)
@@ -54,7 +82,7 @@ vec<DIM, T>     operator+(vec<DIM, T> const & lhs, vec<DIM, T> const & rhs) noex
 }
 
 template <size_t DIM, typename T>
-vec<DIM, T>     operator-(vec<DIM, T> const & lhs, vec<DIM, T> const & rhs) noexcept
+vec<DIM, T>     operator-(vec<DIM, T> const & lhs, vec<DIM, T> const & rhs)
 {
     vec<DIM, T> ret;
     for (size_t i = 0; i < DIM; i++)
@@ -72,7 +100,7 @@ T               operator*(vec<DIM, T> const & lhs, vec<DIM, T> const & rhs)
 }
 
 template<size_t DIM, typename T, typename U>
-vec<DIM, T>     operator*(vec<DIM, T> const & lhs, U const & rhs) noexcept
+vec<DIM, T>     operator*(vec<DIM, T> const & lhs, U const & rhs)
 {
     vec<DIM, T> ret;
     for (size_t i = 0; i < DIM; i++)
@@ -81,7 +109,7 @@ vec<DIM, T>     operator*(vec<DIM, T> const & lhs, U const & rhs) noexcept
 }
 
 template<size_t DIM, typename T>
-vec<DIM, T>     operator-(vec<DIM, T> const & rhs) noexcept
+vec<DIM, T>     operator-(vec<DIM, T> const & rhs)
 {
     return (rhs * T(-1));
 }
@@ -98,6 +126,15 @@ template<typename T>
 vec<3, T>       cross(vec<3, T> const & v1, vec<3, T> const & v2)
 {
     return (vec<3, T>(v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v1.x*v2.z, v1.x*v2.y - v1.y*v2.x));
+}
+
+template<size_t DIM, typename T>
+double Length(std::ostream& out, vec<DIM, T> const& v)
+{
+    double res = 0;
+    for (size_t i = 0; i < DIM; i++)
+        res += vec[i] * vec[i];
+    return (sqrt(res));
 }
 
 #endif

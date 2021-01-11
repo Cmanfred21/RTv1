@@ -22,21 +22,32 @@ struct  Shape
 {
     Shape(Material const & m) : material(m) { }
     virtual ~Shape() {}
-    virtual bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const noexcept = 0;
-    virtual Vec3d & get_normal(Vec3d const & point) = 0;
-    Material    material;
+    virtual bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const = 0;
+    virtual Vec3d   get_normal(Vec3d const & point) = 0;
+    Material        material;
 };
 
 struct  Sphere : Shape
 {
 public:
-    Sphere(Vec3d const & c, double r, Material const & m) noexcept : Shape(m), center(c), radius(r) { }
-    bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const noexcept;
-    Vec3d & get_normal(Vec3d const & point);
+    Sphere(Vec3d const & c, double r, Material const & m) : Shape(m), center(c), radius(r) { }
+    bool    if_intersect(Vec3d const & point, Vec3d const & v, double & dist) const;
+    Vec3d   get_normal(Vec3d const & point);
 private:
     Vec3d       center;
     double      radius;
 };
+
+struct  Plane : Shape
+{
+public:
+    Plane(vec<4, double> const& f, Material const& m) : Shape(m), koef(f) { }
+    bool    if_intersect(Vec3d const& point, Vec3d const& v, double& dist) const;
+    Vec3d  get_normal(Vec3d const& /*point*/);
+private:
+    vec<4, double> koef;
+};
+
 
 struct  Light
 {
