@@ -65,12 +65,12 @@ void    write_to_bmp(std::vector<Vec3d> framebuffer) {
 
     unsigned char pad[3] = { 0,0,0 };
 
-    for (int i = 0; i < h * w; i++)
+    for (auto& frame : framebuffer)
     {
         unsigned char pixel[3];
-        pixel[0] = 255 * std::max(0., std::min(1., framebuffer[i][0]));
-        pixel[1] = 255 * std::max(0., std::min(1., framebuffer[i][1]));
-        pixel[2] = 255 * std::max(0., std::min(1., framebuffer[i][2]));
+        pixel[0] = 255 * std::max(0., std::min(1., frame[0]));
+        pixel[1] = 255 * std::max(0., std::min(1., frame[1]));
+        pixel[2] = 255 * std::max(0., std::min(1., frame[2]));
 
         stream.write((char*)pixel, 3);
     }
@@ -102,8 +102,7 @@ Vec3d   cast_ray(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> con
     Material    material;
 
     if (depth > 4 || !scene_intersect(orig, dir, figures, hit, N, material))
-        return (Vec3d(0.0, 1.0, 0.0));
-        //return (Vec3d(0.2, 0.7, 0.8));
+        return (Vec3d(0.2, 0.7, 0.8));
 
     Vec3d   reflect_dir = reflect(dir, N).normalize();
     Vec3d   reflect_orig = reflect_dir * N < 0 ?  hit - N * 1e-3 : hit + N * 1e-3;
@@ -131,9 +130,6 @@ void    render(std::vector<Shape *> const & figures, std::vector<Light> const & 
     std::vector<Vec3d> framebuffer(WIDTH * HEIGHT);
     for (size_t j = 0; j < HEIGHT; j++) { // actual rendering loop
         for (size_t i = 0; i < WIDTH; i++) {
-            //double  x =  (2 * (i + 0.5) / static_cast<double>(WIDTH)  - 1) * tan(FOV/2.) * WIDTH / static_cast<double>(HEIGHT);
-            //double  y = -(2 * (j + 0.5) / static_cast<double>(HEIGHT) - 1) * tan(FOV / 2.);
-            //Vec3d   dir = Vec3d(x, y, -1).normalize();
             double dir_x = (i + 0.5) - WIDTH / 2.;
             double dir_y = -(j + 0.5) + HEIGHT / 2.;    // this flips the image at the same time
             double dir_z = -HEIGHT / (2. * std::tan(FOV / 2.));
@@ -151,11 +147,13 @@ int		main()
     Material     mirror(Vec3d(1., 1., 1.), Vec3d(0.0, 10.0, 0.8), 1425.);
 
     std::vector<Shape *> figures;
+    std::vector<double> plane_formula{ 0., 0., 1., -30. };
 
     figures.push_back(new Sphere(Vec3d(-3, 0, -16), 2, ivory));
     figures.push_back(new Sphere(Vec3d(-1.0, -1.5, -12), 2,      glass));
     figures.push_back(new Sphere(Vec3d(1.5, -0.5, -18), 3, red_rubber));
     figures.push_back(new Sphere(Vec3d( 7,    5,   -18), 4,     mirror));
+    figures.push_back(new Plane(vec<4, double>(plane_formula), mirror));
 
     std::vector<Light>  lights;
 
@@ -164,6 +162,5 @@ int		main()
     lights.push_back(Light(Vec3d( 30, 20,  30), 1.7));
 
     render(figures, lights);
-    system("open ~/RTv1/out.ppm");
 	return (0);
 }

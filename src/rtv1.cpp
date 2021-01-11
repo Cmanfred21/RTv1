@@ -1,6 +1,6 @@
 #include "rtv1.h"
 
-bool   Sphere::if_intersect(const Vec3d &point, const Vec3d &v, double & t0) const noexcept
+bool   Sphere::if_intersect(const Vec3d &point, const Vec3d &v, double & t0) const
 {
     Vec3d   dist = center - point;
     double  b = v * dist;
@@ -17,7 +17,19 @@ bool   Sphere::if_intersect(const Vec3d &point, const Vec3d &v, double & t0) con
     return (true);
 }
 
-Vec3d & Sphere::get_normal(const Vec3d &point)
+bool   Plane::if_intersect(const Vec3d& point, const Vec3d& v, double& t0) const
+{
+    double k = -(point[0] * koef[0] + point[1] * koef[1] + point[2] * koef[2] + koef[3]) / (koef[0] * v[0] + koef[1] * v[1] + koef[2] * v[2]);
+    t0 = (v * k).Length();
+    return k >= 0;
+}
+
+Vec3d Sphere::get_normal(const Vec3d &point)
 {
     return (point - center).normalize();
+}
+
+Vec3d Plane::get_normal(Vec3d const&)
+{
+    return Vec3d(koef[0], koef[1], koef[2]);
 }
