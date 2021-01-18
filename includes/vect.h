@@ -133,7 +133,7 @@ double Length(std::ostream& out, vec<DIM, T> const& v)
 {
     double res = 0;
     for (size_t i = 0; i < DIM; i++)
-        res += vec[i] * vec[i];
+        res += v[i] * v[i];
     return (sqrt(res));
 }
 

@@ -93,7 +93,7 @@ bool    scene_intersect(Vec3d const & orig, Vec3d const & dir, std::vector<Shape
             material = i->material;
         }
     }
-    return dist < 1000;
+    return dist < std::numeric_limits<double>::max();
 }
 
 Vec3d   cast_ray(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> const & figures, std::vector<Light> const & lights, size_t depth = 0)
@@ -102,7 +102,7 @@ Vec3d   cast_ray(Vec3d const & orig, Vec3d const & dir, std::vector<Shape *> con
     Material    material;
 
     if (depth > 4 || !scene_intersect(orig, dir, figures, hit, N, material))
-        return (Vec3d(0.2, 0.7, 0.8));
+        return (Vec3d(0.3, 0.3, 0.3));
 
     Vec3d   reflect_dir = reflect(dir, N).normalize();
     Vec3d   reflect_orig = reflect_dir * N < 0 ?  hit - N * 1e-3 : hit + N * 1e-3;
@@ -143,17 +143,18 @@ int		main()
 {
     Material      ivory(Vec3d(0.4, 0.4, 0.3), Vec3d(0.6, 0.3, 0.1), 50.);
     Material      glass(Vec3d(0.6, 0.7, 0.8), Vec3d(0.5, 0.5, 0.5), 125.);
-    Material red_rubber(Vec3d(0.3, 0.1, 0.1), Vec3d(0.9, 0.1, 0.0), 10.);
+    Material blue_rubber(Vec3d(0.9, 0.1, 0.1), Vec3d(0.9, 0.1, 0.), 10.);
     Material     mirror(Vec3d(1., 1., 1.), Vec3d(0.0, 10.0, 0.8), 1425.);
+    Material red_wall(Vec3d(0.1, 0.1, 0.3), Vec3d(0.9, 0.1, 0.), 10.);
 
     std::vector<Shape *> figures;
-    std::vector<double> plane_formula{ 0., 0., 1., -30. };
+    std::vector<double> plane_formula{ 0., 1., 0., 100};
 
-    figures.push_back(new Sphere(Vec3d(-3, 0, -16), 2, ivory));
-    figures.push_back(new Sphere(Vec3d(-1.0, -1.5, -12), 2,      glass));
-    figures.push_back(new Sphere(Vec3d(1.5, -0.5, -18), 3, red_rubber));
+    figures.push_back(new Sphere(Vec3d(-3, 0, -10), 2, ivory));
+    figures.push_back(new Sphere(Vec3d(-1.0, -4, -12), 2,      glass));
+    figures.push_back(new Sphere(Vec3d(1.5, -0.5, -18), 3, blue_rubber));
     figures.push_back(new Sphere(Vec3d( 7,    5,   -18), 4,     mirror));
-    figures.push_back(new Plane(vec<4, double>(plane_formula), mirror));
+    figures.push_back(new Plane(vec<4, double>(plane_formula), red_wall));
 
     std::vector<Light>  lights;
 

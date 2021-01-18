@@ -20,7 +20,7 @@ bool   Sphere::if_intersect(const Vec3d &point, const Vec3d &v, double & t0) con
 bool   Plane::if_intersect(const Vec3d& point, const Vec3d& v, double& t0) const
 {
     double k = -(point[0] * koef[0] + point[1] * koef[1] + point[2] * koef[2] + koef[3]) / (koef[0] * v[0] + koef[1] * v[1] + koef[2] * v[2]);
-    t0 = (v * k).Length();
+    t0 = (point + v * k).Length();
     return k >= 0;
 }
 

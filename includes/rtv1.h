@@ -1,6 +1,6 @@
 #pragma once
 
-const double M_PI = 3.14159265358979323846;
+// const double M_PI = 3.14159265358979323846;
 
 # include "vect.h"
 # define WIDTH 1920
